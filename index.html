@@ -392,7 +392,38 @@ flexibility(document.documentElement);
 								<div class="elementor-element elementor-element-48a2890 elementor-widget elementor-widget-image" data-id="48a2890" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
 			<style>/*! elementor - v3.7.8 - 02-10-2022 */
-.elementor-widget-image{text-align:center}.elementor-widget-image a{display:inline-block}.elementor-widget-image a img[src$=".svg"]{width:48px}.elementor-widget-image img{vertical-align:middle;display:inline-block}</style>												<img decoding="async" width="1214" height="900" src="/wp-content/uploads/2022/10/desain-min.png" class="attachment-full size-full" alt="" loading="lazy" srcset="/wp-content/uploads/2022/10/desain-min.png 1214w, /wp-content/uploads/2022/10/desain-min-300x222.png 300w, /wp-content/uploads/2022/10/desain-min-1024x759.png 1024w, /wp-content/uploads/2022/10/desain-min-768x569.png 768w" sizes="(max-width: 1214px) 100vw, 1214px">															</div>
+.elementor-widget-image{text-align:center}.elementor-widget-image a{display:inline-block}.elementor-widget-image a img[src$=".svg"]{width:48px}.elementor-widget-image img{vertical-align:middle;display:inline-block}</style>												<style>
+.elementor-302 .elementor-element.elementor-element-48a2890 > .elementor-widget-container{margin:0 0 0 32px}
+@media (max-width:1024px){.elementor-302 .elementor-element.elementor-element-48a2890 > .elementor-widget-container{margin:32px 0 0}}
+.crab-hero{position:relative;overflow:hidden;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.35);background:#000}
+.crab-hero__video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.crab-hero__caption{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:rgba(0,0,0,.45);color:#fff;font-weight:700;font-size:clamp(22px,3.2vw,44px);line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity 1s ease}
+.crab-hero__caption.is-visible{opacity:1}
+</style>
+<div class="crab-hero">
+<video class="crab-hero__video" src="/wp-content/uploads/2026/10/crab-hero.mp4" poster="/wp-content/uploads/2026/10/crab-hero-poster.jpg" width="1280" height="720" muted autoplay playsinline preload="auto"></video>
+<div class="crab-hero__caption" aria-live="polite">Mas Dany Ali Syafii Ganteng</div>
+</div>
+<script>
+(function(){
+	var video = document.querySelector('.crab-hero__video');
+	var caption = document.querySelector('.crab-hero__caption');
+	if (!video || !caption) return;
+	var FADE_MS = 1000, HOLD_MS = 2000;
+	// Video selesai -> tulisan fade in, tahan, fade out, lalu video diputar ulang.
+	video.addEventListener('ended', function(){
+		caption.classList.add('is-visible');
+		setTimeout(function(){
+			caption.classList.remove('is-visible');
+			setTimeout(function(){
+				video.currentTime = 0;
+				var p = video.play();
+				if (p && p.catch) p.catch(function(){});
+			}, FADE_MS);
+		}, FADE_MS + HOLD_MS);
+	});
+})();
+</script>															</div>
 				</div>
 					</div>
 		</div>
