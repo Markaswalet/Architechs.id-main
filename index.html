@@ -309,7 +309,15 @@ flexibility(document.documentElement);
 		
 				<div data-elementor-type="wp-page" data-elementor-id="302" class="elementor elementor-302">
 									<section class="elementor-section elementor-top-section elementor-element elementor-element-995c984 elementor-section-boxed elementor-section-height-default elementor-section-height-default" data-id="995c984" data-element_type="section" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
-							<div class="elementor-background-overlay"></div>
+							<style>
+.elementor-302 .elementor-element.elementor-element-995c984{overflow:hidden}
+.elementor-302 .elementor-element.elementor-element-995c984 > .crab-hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.elementor-302 .elementor-element.elementor-element-995c984 > .elementor-background-overlay{background-image:linear-gradient(90deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.3) 55%,rgba(0,0,0,0) 100%);z-index:1}
+.elementor-302 .elementor-element.elementor-element-995c984 > .elementor-container{z-index:2;min-height:calc(100vh - 240px);align-items:center}
+@media (max-width:767px){.elementor-302 .elementor-element.elementor-element-995c984 > .elementor-container{min-height:0}.elementor-302 .elementor-element.elementor-element-8da6390{display:none}}
+</style>
+<video class="crab-hero-bg" src="/wp-content/uploads/2026/10/crab-hero.mp4" poster="/wp-content/uploads/2026/10/crab-hero-poster.jpg" muted autoplay loop playsinline preload="auto"></video>
+<div class="elementor-background-overlay"></div>
 							<div class="elementor-container elementor-column-gap-no">
 					<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-49e0ef8" data-id="49e0ef8" data-element_type="column">
 			<div class="elementor-widget-wrap elementor-element-populated">
@@ -392,38 +400,7 @@ flexibility(document.documentElement);
 								<div class="elementor-element elementor-element-48a2890 elementor-widget elementor-widget-image" data-id="48a2890" data-element_type="widget" data-widget_type="image.default">
 				<div class="elementor-widget-container">
 			<style>/*! elementor - v3.7.8 - 02-10-2022 */
-.elementor-widget-image{text-align:center}.elementor-widget-image a{display:inline-block}.elementor-widget-image a img[src$=".svg"]{width:48px}.elementor-widget-image img{vertical-align:middle;display:inline-block}</style>												<style>
-.elementor-302 .elementor-element.elementor-element-48a2890 > .elementor-widget-container{margin:0 0 0 32px}
-@media (max-width:1024px){.elementor-302 .elementor-element.elementor-element-48a2890 > .elementor-widget-container{margin:32px 0 0}}
-.crab-hero{position:relative;overflow:hidden;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.35);background:#000}
-.crab-hero__video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
-.crab-hero__caption{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;background:rgba(0,0,0,.45);color:#fff;font-weight:700;font-size:clamp(22px,3.2vw,44px);line-height:1.2;text-shadow:0 2px 12px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity 1s ease}
-.crab-hero__caption.is-visible{opacity:1}
-</style>
-<div class="crab-hero">
-<video class="crab-hero__video" src="/wp-content/uploads/2026/10/crab-hero.mp4" poster="/wp-content/uploads/2026/10/crab-hero-poster.jpg" width="1280" height="720" muted autoplay playsinline preload="auto"></video>
-<div class="crab-hero__caption" aria-live="polite">Mas Dany Ali Syafii Ganteng</div>
-</div>
-<script>
-(function(){
-	var video = document.querySelector('.crab-hero__video');
-	var caption = document.querySelector('.crab-hero__caption');
-	if (!video || !caption) return;
-	var FADE_MS = 1000, HOLD_MS = 2000;
-	// Video selesai -> tulisan fade in, tahan, fade out, lalu video diputar ulang.
-	video.addEventListener('ended', function(){
-		caption.classList.add('is-visible');
-		setTimeout(function(){
-			caption.classList.remove('is-visible');
-			setTimeout(function(){
-				video.currentTime = 0;
-				var p = video.play();
-				if (p && p.catch) p.catch(function(){});
-			}, FADE_MS);
-		}, FADE_MS + HOLD_MS);
-	});
-})();
-</script>															</div>
+.elementor-widget-image{text-align:center}.elementor-widget-image a{display:inline-block}.elementor-widget-image a img[src$=".svg"]{width:48px}.elementor-widget-image img{vertical-align:middle;display:inline-block}</style>																											</div>
 				</div>
 					</div>
 		</div>
