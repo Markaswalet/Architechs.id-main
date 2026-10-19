@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300&display=swap');
 /* Tombol header "Konsultasi Desain": putih, hover biru dongker dengan efek pantulan cahaya */
 .ast-header-button-1 .ast-builder-button-wrap .ast-custom-button-link {
   text-decoration: none;
@@ -41,4 +42,15 @@
   .ast-header-button-1 .ast-builder-button-wrap .ast-custom-button { transition: none; }
   .ast-header-button-1 .ast-builder-button-wrap .ast-custom-button:hover { transform: none; }
   .ast-header-button-1 .ast-builder-button-wrap .ast-custom-button:hover::after { animation: none; }
+}
+
+/* Footer bawah: teks copyright dan "Development by" lebih tipis dan abu-abu */
+.site-below-footer-wrap .ast-footer-copyright,
+.site-below-footer-wrap .ast-footer-copyright p,
+.site-below-footer-wrap .ast-footer-copyright a {
+  color: #8c8c8c;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
 }
