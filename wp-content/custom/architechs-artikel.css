@@ -487,6 +487,106 @@
   min-height: 220px;
 }
 
+/* Panduan panjang: ringkasan, daftar isi, tabel, FAQ, gambar potret */
+.ax-summary {
+  margin: 0 0 24px;
+  padding: 20px 24px;
+  background: var(--ax-soft);
+  border-left: 4px solid var(--ax-blue);
+  border-radius: 0 12px 12px 0;
+}
+.ax-summary-title,
+.ax-toc-title {
+  margin: 0 0 8px !important;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: var(--ax-heading);
+}
+.ax-summary ul {
+  margin: 0 !important;
+}
+.ax-toc {
+  margin: 0 0 12px;
+  padding: 20px 24px;
+  border: 1px solid var(--ax-line);
+  border-radius: 12px;
+}
+.ax-toc ol {
+  margin: 0 !important;
+}
+.ax-toc li {
+  margin-bottom: 4px;
+}
+.ax-toc a {
+  text-decoration: none;
+}
+.ax-toc a:hover {
+  text-decoration: underline;
+}
+.ax-prose h2[id] {
+  scroll-margin-top: 24px;
+}
+.ax-table-wrap {
+  margin: 0 0 22px;
+  overflow-x: auto;
+  border: 1px solid var(--ax-line);
+  border-radius: 12px;
+}
+.ax-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 17px;
+}
+.ax-table th,
+.ax-table td {
+  padding: 12px 18px;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--ax-line);
+}
+.ax-table th {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--ax-navy);
+}
+.ax-table tbody tr:nth-child(even) {
+  background: var(--ax-soft);
+}
+.ax-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.ax-table td:last-child {
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--ax-heading);
+}
+.ax-faq-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ax-line);
+}
+.ax-faq-item:first-child {
+  padding-top: 0;
+}
+.ax-faq-item h3 {
+  margin: 0 0 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ax-heading);
+}
+.ax-faq-item p {
+  margin: 0 !important;
+}
+.ax-figure--portrait {
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 @media (max-width: 921px) {
   .ax-hero::before {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
