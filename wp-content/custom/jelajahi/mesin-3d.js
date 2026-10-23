@@ -181,6 +181,74 @@ function buatMaterial() {
   return M;
 }
 
+/* ---------- Model karya dari berkas GLB ----------
+ * Berkas disiapkan dari ekspor SketchUp/Enscape: interior dan tanaman dibuang, satu mesh per peran
+ * material, posisi int16 ternormalisasi (KHR_mesh_quantization) dengan skala dan geser di node,
+ * tanpa tekstur dan normal. Peran bertanda `materialMesin` (kaca, rumput, ...) memakai material
+ * kawasan agar ikut menyala di malam hari; peran lain memakai warna dari berkas.
+ */
+const TIPE_KOMPONEN = { 5120: Int8Array, 5121: Uint8Array, 5122: Int16Array, 5123: Uint16Array, 5125: Uint32Array, 5126: Float32Array };
+const JUMLAH_KOMPONEN = { SCALAR: 1, VEC2: 2, VEC3: 3, VEC4: 4 };
+
+function materialDari(def) {
+  const pbr = def.pbrMetallicRoughness || {};
+  const [r, g, b, a] = pbr.baseColorFactor || [1, 1, 1, 1];
+  const m = new THREE.MeshStandardMaterial({
+    color: new THREE.Color().setRGB(r, g, b, THREE.LinearSRGBColorSpace),
+    roughness: pbr.roughnessFactor ?? 1,
+    metalness: pbr.metallicFactor ?? 0,
+    side: def.doubleSided ? THREE.DoubleSide : THREE.FrontSide,
+  });
+  if (def.alphaMode === 'BLEND') {
+    Object.assign(m, { transparent: true, opacity: a, depthWrite: false });
+    m.userData.tanpaBayangan = true;
+  }
+  return m;
+}
+
+async function muatModel(url, M) {
+  const respons = await fetch(url);
+  if (!respons.ok) throw new Error(`${url}: HTTP ${respons.status}`);
+  const buf = await respons.arrayBuffer();
+  const dv = new DataView(buf);
+  if (dv.getUint32(0, true) !== 0x46546c67) throw new Error(`${url}: bukan berkas GLB`);
+  const panjangJson = dv.getUint32(12, true);
+  const gltf = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 20, panjangJson)));
+  const awalBin = 28 + panjangJson;
+  const atribut = (i) => {
+    const a = gltf.accessors[i];
+    const bv = gltf.bufferViews[a.bufferView];
+    const Tipe = TIPE_KOMPONEN[a.componentType];
+    const k = JUMLAH_KOMPONEN[a.type];
+    const langkah = bv.byteStride ? bv.byteStride / Tipe.BYTES_PER_ELEMENT : k;
+    const sumber = new Tipe(buf, awalBin + (bv.byteOffset || 0) + (a.byteOffset || 0), (a.count - 1) * langkah + k);
+    let isi = sumber;
+    if (langkah !== k) {
+      isi = new Tipe(a.count * k);
+      for (let v = 0; v < a.count; v++) for (let c = 0; c < k; c++) isi[v * k + c] = sumber[v * langkah + c];
+    }
+    return new THREE.BufferAttribute(isi, k, !!a.normalized);
+  };
+  const grup = new THREE.Group();
+  for (const node of gltf.nodes) {
+    const prim = gltf.meshes[node.mesh].primitives[0];
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', atribut(prim.attributes.POSITION));
+    geo.setIndex(atribut(prim.indices));
+    geo.computeVertexNormals();
+    const def = gltf.materials[prim.material];
+    const mat = (def.extras?.materialMesin && M[def.extras.peran]) || materialDari(def);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.name = node.name || '';
+    mesh.position.fromArray(node.translation || [0, 0, 0]);
+    if (node.scale) mesh.scale.fromArray(node.scale);
+    mesh.castShadow = !mat.userData.tanpaBayangan;
+    mesh.receiveShadow = true;
+    grup.add(mesh);
+  }
+  return grup;
+}
+
 /* ---------- Langit (gradasi + cahaya matahari) ---------- */
 function buatMaterialLangit() {
   return new THREE.ShaderMaterial({
@@ -329,39 +397,24 @@ function paviliunLentera(p, pj, M) {
   return { tinggi: 10.5 };
 }
 
-function rumahTropis(p, pj, M, rng) {
-  // Halaman
-  pj.kotak(M.paving, 4.6, 0.08, 9.5, -6.2, 0, 7.2);
-  pj.kotak(M.paving, 1.4, 0.08, 6, -1.5, 0, 8.7);
-  p.kotak(M.kayu, 4.2, 0.18, 2.2, -1.2, 0, 4.6);
-  // Lantai 1
-  p.kotak(M.putih, 10, 3.3, 9, 1, 0, -1);
-  p.kotak(M.kaca, 5.2, 2.4, 0.1, 2.6, 0.45, 3.52);
-  p.kotak(M.kayuGelap, 1.3, 2.5, 0.12, -2.4, 0.1, 3.53);
-  p.kotak(M.kacaRedup, 0.1, 1.6, 3.2, 6.03, 1.1, -1.5);
-  // Lantai 2 menggantung ke depan
-  p.kotak(M.krem, 11.5, 3.0, 8.6, 0.5, 3.3, 0.6);
-  p.kotak(M.gelap, 11.7, 0.22, 8.8, 0.5, 3.25, 0.6);
-  p.kotak(M.kacaRedup, 9.6, 2.3, 0.08, 1, 3.65, 4.92);
-  for (let x = -3.9; x <= 5.95; x += 0.34) p.kotak(M.kayu, 0.1, 2.6, 0.14, x, 3.5, 5.02);
-  p.kotak(M.kaca, 0.1, 1.7, 3.6, 6.28, 4.0, 0.2);
-  p.kotak(M.kaca, 0.1, 1.7, 2.6, -5.28, 4.0, -1.2);
-  // Atap limas berteritis lebar
-  p.kotak(M.gelap, 13.6, 0.25, 11, 0.5, 6.3, 0.6);
-  p.tambah('limas', M.gelap, 14.4, 2.5, 11.6, 0.5, 6.5, 0.6);
-  // Carport
-  for (const [cx, cz] of [[-8.2, 1.4], [-4.3, 1.4], [-8.2, 8.6], [-4.3, 8.6]]) p.kotak(M.gelap, 0.18, 2.75, 0.18, cx, 0, cz);
-  p.kotak(M.putih, 4.8, 0.25, 7.8, -6.25, 2.75, 5);
-  mobil(p, M, -6.2, 5.2, 0, '#e8e8e8', 0.08);
-  // Pagar rendah + taman
-  p.kotak(M.beton, 0.25, 1.1, 9, -10, 0, 0);
-  p.kotak(M.beton, 0.25, 1.1, 9, 10, 0, 0);
-  p.kotak(M.beton, 10.2, 1.1, 0.25, 4.9, 0, 11.6);
-  for (let i = 0; i < 8; i++) semak(p, M, 3 + rng() * 6, 6.5 + rng() * 4.5, 0.8 + rng() * 0.7, rng);
-  pohon(p, M, 7.5, 8.5, 1.0, rng);
-  pohon(p, M, 8, -7.5, 1.1, rng);
-  pohon(p, M, -8.5, -7, 0.9, rng, 'kerucut');
-  return { tinggi: 9 };
+// Kasang House (Mojokerto): bangunan dari model/kasang-house.glb, lahan 5 x 21 m berpusat di titik asal.
+// Fungsi ini hanya menata taman di sisi lahan, dan membuat massa sederhana bila model gagal dimuat.
+function kasangHouse(p, pj, M, rng, adaModel) {
+  if (!adaModel) {
+    p.kotak(M.beton, 5.1, 3.0, 17.4, 0, 0, -1.9);
+    p.tambah('prisma', M.gelap, 4.2, 1.7, 17.6, -0.4, 3.0, -1.9);
+    p.kotak(M.gelap, 5.1, 0.12, 3.5, 0, 2.6, 8.8);
+  }
+  // Sisi barat kavling yang lapang (x lokal positif) menjadi taman, sisi timur sempit diberi semak
+  for (let z = -9; z <= 9; z += 1.5) semak(p, M, 3.4, z + rng() * 0.6, 0.7 + rng() * 0.4, rng);
+  for (let z = -8; z <= 8; z += 2) semak(p, M, -3.6, z + rng() * 0.6, 0.6 + rng() * 0.3, rng);
+  pohon(p, M, 7, 6.5, 1.0, rng);
+  pohon(p, M, 12.5, 1, 1.15, rng);
+  pohon(p, M, 8.5, -6, 0.95, rng, 'kerucut');
+  pohon(p, M, 15, -9.5, 1.05, rng);
+  pohon(p, M, 15.5, 8, 0.9, rng, 'kerucut');
+  for (let i = 0; i < 6; i++) semak(p, M, 6 + rng() * 10, -12 + rng() * 22, 0.8 + rng() * 0.6, rng);
+  return { tinggi: 4.9 };
 }
 
 function rumahSplitLevel(p, pj, M, rng) {
@@ -664,10 +717,10 @@ function jembatan(p, pj, M) {
 }
 
 // Tata letak kawasan: posisi dan orientasi setiap karya (ry memutar arah depan +z),
-// serta titik berdiri untuk tombol "Lihat dari jalan".
+// serta titik berdiri untuk tombol "Lihat dari jalan". `model` = berkas GLB relatif terhadap modul ini.
 const KAVLING = [
   { id: 'paviliun-lentera', x: 0, z: 0, ry: 0, jalan: [0, 21], bangun: paviliunLentera },
-  { id: 'rumah-tropis', x: -66, z: 33, ry: Math.PI, jalan: [-59.8, 11], bangun: rumahTropis },
+  { id: 'kasang-house', x: -59.8, z: 31.6, ry: Math.PI, jalan: [-59.8, 11], bangun: kasangHouse, model: './model/kasang-house.glb?ver=1' },
   { id: 'rumah-split-level', x: -30, z: 34, ry: Math.PI, jalan: [-23.5, 11], bangun: rumahSplitLevel },
   { id: 'villa-tepi-danau', x: 84, z: 34, ry: -Math.PI / 2, jalan: [80, 11], bangun: villaTepiDanau },
   { id: 'masjid', x: -26, z: -34, ry: Math.PI / 2, jalan: [-0.5, -34], bangun: masjid },
@@ -996,6 +1049,15 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
   bangunLingkungan(adegan, M, rng, kualitas, permukaan, jalanSetapak);
 
   const dataKarya = new Map(karya.map((k) => [k.id, k]));
+  // Model GLB dimuat bersamaan; bila gagal, fungsi bangun karya membuat massa sederhana sebagai gantinya.
+  const modelKarya = new Map(await Promise.all(KAVLING.filter((k) => k.model && dataKarya.has(k.id)).map((k) =>
+    muatModel(new URL(k.model, import.meta.url), M).then(
+      (model) => [k.id, model],
+      (galat) => {
+        console.warn('[Jelajahi Karya] Model gagal dimuat:', k.model, galat);
+        return [k.id, null];
+      },
+    ))));
   const daftar = [];
   const objekKlik = [];
   for (const kav of KAVLING) {
@@ -1007,12 +1069,18 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
     grup.userData.karyaId = kav.id;
     const p = new Perakit();
     const pj = new Perakit();
-    const info = kav.bangun(p, pj, M, rng) || {};
+    const model = modelKarya.get(kav.id);
+    const info = kav.bangun(p, pj, M, rng, !!model) || {};
     const mesh = p.pasang(grup);
     const meshJalan = pj.pasang(grup);
+    if (model) {
+      grup.add(model);
+      mesh.push(...model.children);
+    }
     adegan.add(grup);
     grup.updateMatrixWorld(true);
-    const kotak = new THREE.Box3().setFromObject(grup);
+    // Karya ber-model diukur dari bangunannya saja, agar taman di satu sisi kavling tidak menggeser pusatnya
+    const kotak = new THREE.Box3().setFromObject(model || grup);
     const pusat = kotak.getCenter(new THREE.Vector3());
     const ukuran = kotak.getSize(new THREE.Vector3());
     const semua = [...mesh, ...meshJalan];

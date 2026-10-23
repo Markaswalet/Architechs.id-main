@@ -3,7 +3,7 @@
  * Mengatur bilah alat, panel detail, daftar karya, dan memuat mesin-3d.js
  * hanya saat seksi mendekati layar. Panel dan daftar tetap berfungsi tanpa WebGL.
  */
-import { KARYA, KATEGORI } from './data-karya.js?ver=1';
+import { KARYA, KATEGORI } from './data-karya.js?ver=2';
 
 const NOMOR_WA = '6282229540204';
 
@@ -325,7 +325,7 @@ function mulai(akar) {
       return;
     }
     try {
-      const { buatMesin } = await import('./mesin-3d.js?ver=2');
+      const { buatMesin } = await import('./mesin-3d.js?ver=3');
       const kecil = sempit() || (navigator.hardwareConcurrency || 8) <= 4;
       mesin = await buatMesin({
         panggung,
