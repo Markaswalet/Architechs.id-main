@@ -31,7 +31,6 @@ function mulai(akar) {
   const statusMuat = $('.jk-muat-teks');
   const lapisanLabel = $('.jk-label');
   const panel = $('.jk-panel');
-  const panelAwal = $('.jk-panel-awal');
   const panelDetail = $('.jk-panel-detail');
   const pita = $('.jk-pita');
   const daftar = $('.jk-daftar');
@@ -142,7 +141,7 @@ function mulai(akar) {
     return `
       <div class="jk-panel-kepala">
         <span class="jk-tag" style="--warna:${kat.warna}">${esc(kat.nama)}</span>
-        <button type="button" class="jk-tutup" data-aksi="tutup" aria-label="Tutup detail, kembali ke ringkasan">×</button>
+        <button type="button" class="jk-tutup" data-aksi="tutup" aria-label="Tutup detail">×</button>
       </div>
       <h3 class="jk-panel-judul" tabindex="-1">${esc(k.judul)}</h3>
       <p class="jk-panel-teks">${esc(k.deskripsi)}</p>
@@ -173,13 +172,11 @@ function mulai(akar) {
     if (!k) {
       panelDetail.hidden = true;
       panelDetail.innerHTML = '';
-      panelAwal.hidden = false;
       pita.hidden = true;
       return;
     }
     panelDetail.innerHTML = htmlDetail(k);
     panelDetail.hidden = false;
-    panelAwal.hidden = true;
     panel.scrollTop = 0;
     pita.hidden = false;
     pita.querySelector('.jk-pita-judul').textContent = k.judul;
@@ -219,8 +216,6 @@ function mulai(akar) {
       } catch {
         window.prompt('Salin tautan karya ini:', url);
       }
-    } else if (aksi === 'tur') {
-      mulaiTur();
     }
   });
 
@@ -330,7 +325,7 @@ function mulai(akar) {
       return;
     }
     try {
-      const { buatMesin } = await import('./mesin-3d.js?ver=1');
+      const { buatMesin } = await import('./mesin-3d.js?ver=2');
       const kecil = sempit() || (navigator.hardwareConcurrency || 8) <= 4;
       mesin = await buatMesin({
         panggung,
@@ -379,7 +374,7 @@ function mulai(akar) {
       gagal('Tampilan 3D gagal dimuat. Jelajahi karya lewat daftar di bawah.');
     }
   }
-  // Panel melayang di kanan menutupi sebagian peta, jadi titik fokus kamera digeser ke tengah area yang terlihat.
+  // Panel detail melayang di kanan menutupi sebagian peta, jadi selama panel tampil titik fokus kamera digeser ke tengah area yang terlihat.
   function aturGeser() {
     if (!mesin) return;
     const melayang = getComputedStyle(panel).position === 'absolute' && getComputedStyle(panel).display !== 'none';
