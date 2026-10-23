@@ -54,7 +54,7 @@ export const KARYA = [
     kategori: 'hunian',
     ringkas: 'Rumah satu lantai bermassa memanjang di lahan 5 × 20 m, beratap pelana metal gelap.',
     deskripsi:
-      'Kasang House adalah rumah tinggal satu lantai bermassa memanjang dengan atap pelana metal gelombang berwarna gelap. Tampak depannya berupa dinding masif krem dengan pergola rangka baja hitam di atasnya, sehingga rumah terlihat tertutup dari jalan. Cahaya masuk lewat jendela pita memanjang di bawah atap dan taman dalam, bukan dari jendela di sisi samping. Ruang di dalamnya terdiri dari ruang tamu, dapur dan ruang makan, dua kamar tidur, serta area cuci jemur.',
+      'Kasang House adalah rumah tinggal satu lantai bermassa memanjang dengan atap pelana metal gelombang berwarna gelap. Tampak depannya berupa dinding masif plester ekspos abu-abu dengan pergola rangka baja hitam di atasnya, sehingga rumah terlihat tertutup dari jalan. Cahaya masuk lewat jendela pita memanjang di bawah atap dan taman dalam, bukan dari jendela di sisi samping. Ruang di dalamnya terdiri dari ruang tamu, dapur dan ruang makan, dua kamar tidur, serta area cuci jemur.',
     fakta: [
       ['Fungsi', 'Rumah tinggal'],
       ['Lokasi', 'Mojokerto'],
@@ -65,12 +65,17 @@ export const KARYA = [
     poin: [
       'Jendela pita (clerestory) memanjang tepat di bawah atap untuk cahaya tanpa mengorbankan privasi',
       'Taman dalam dan roster di bagian depan dan tengah rumah',
-      'Dinding luar bertekstur krem yang nyaris tanpa bukaan di sisi samping',
+      'Dinding luar plester ekspos abu-abu yang nyaris tanpa bukaan di sisi samping',
       'Carport berkanopi pergola baja dengan pagar panel gelap',
     ],
-    galeri: [],
+    galeri: [
+      '/wp-content/uploads/2026/10/kasang-house-depan-800x441.jpg',
+      '/wp-content/uploads/2026/10/kasang-house-carport-800x441.jpg',
+      '/wp-content/uploads/2026/10/kasang-house-taman-dalam-800x441.jpg',
+      '/wp-content/uploads/2026/10/kasang-house-roster-800x441.jpg',
+    ],
     tautan: { label: 'Lihat di Behance', href: 'https://www.behance.net/gallery/254163429/K-House' },
-    kataKunci: 'kasang k house rumah tinggal satu lantai mojokerto pelana clerestory jendela pita roster taman dalam carport pergola industrial minimalis',
+    kataKunci: 'kasang k house rumah tinggal satu lantai mojokerto pelana clerestory jendela pita roster glass block taman dalam carport pergola industrial minimalis plester ekspos abu-abu',
   },
   {
     id: 'rumah-split-level',
