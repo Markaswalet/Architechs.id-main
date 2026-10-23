@@ -1640,11 +1640,20 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
     minta();
   }
   let geserTengah = 0;
+  let geserTujuan = 0;
   function terapkanGeser() {
     const { w, h } = lebarTinggi;
     if (geserTengah > 0 && w > geserTengah * 4) kamera.setViewOffset(w, h, geserTengah, 0, w, h);
     else kamera.clearViewOffset();
     kamera.updateProjectionMatrix();
+  }
+  // Panel detail muncul dan hilang mengikuti pilihan, jadi pergeseran pusat pandang dilunakkan agar peta tidak melompat.
+  function langkahGeser(dt) {
+    if (geserTengah === geserTujuan) return false;
+    const sisa = geserTujuan - geserTengah;
+    geserTengah = Math.abs(sisa) < 0.5 ? geserTujuan : geserTengah + sisa * (1 - Math.exp(-dt * 9));
+    terapkanGeser();
+    return true;
   }
   const pengamatUkuran = new ResizeObserver(ukurUlang);
   pengamatUkuran.observe(panggung);
@@ -1712,6 +1721,7 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
       if (kontrol.update()) berubah = true;
     }
     if (langkahTransisi(now)) berubah = true;
+    if (langkahGeser(dt)) berubah = true;
     if (langkahCincin(now)) berubah = true;
     langkahTur(now);
     prosesHover();
@@ -1766,9 +1776,12 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
     sedangJalan: () => modeJalan,
     aturLayarPenuh: (penuh) => { layarPenuh = penuh; },
     aturGeser: (px) => {
-      if (Math.abs(px - geserTengah) < 1) return;
-      geserTengah = px;
-      terapkanGeser();
+      if (Math.abs(px - geserTujuan) < 1) return;
+      geserTujuan = px;
+      if (kurangiGerak || !aktif) {
+        geserTengah = px;
+        terapkanGeser();
+      }
       minta();
     },
     lanjutkan,

@@ -638,6 +638,13 @@
   overscroll-behavior: contain;
   scrollbar-width: thin;
 }
+/* Panel hanya tampil saat sebuah karya dipilih; tanpa pilihan peta memakai seluruh lebar */
+.jk-area:not(.jk-area--ada-pilihan) .jk-panel {
+  display: none;
+}
+.jk-area:not(.jk-area--ada-pilihan) .jk-bawah {
+  max-width: calc(100% - 28px);
+}
 .jk-panel-kepala {
   display: flex;
   align-items: center;
@@ -661,9 +668,6 @@
   height: 8px;
   border-radius: 50%;
   background: var(--warna);
-}
-.jk-panel-awal .jk-tag {
-  margin-bottom: 8px;
 }
 .jk .jk-tutup {
   display: inline-flex;
@@ -862,15 +866,6 @@
   background: none;
   color: var(--jk-biru-tua);
   text-decoration: underline;
-}
-.jk .jk-panel-awal .jk-tombol {
-  margin: 4px 0 12px;
-}
-.jk .jk-hint {
-  margin: 0;
-  color: var(--jk-redup);
-  font-size: 13.5px;
-  line-height: 1.5;
 }
 
 /* Catatan dan daftar karya */
@@ -1129,7 +1124,6 @@ html.jk-kunci-gulir body {
     margin: 0;
     box-shadow: 0 -10px 30px -12px rgba(15, 27, 45, 0.45);
   }
-  .jk-penjelajah--penuh .jk-area:not(.jk-area--ada-pilihan) .jk-panel,
   .jk-penjelajah--penuh .jk-pita {
     display: none !important;
   }
