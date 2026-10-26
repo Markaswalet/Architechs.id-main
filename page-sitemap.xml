@@ -2,7 +2,14 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<url>
 		<loc>/berita</loc>
-		<lastmod>2026-10-22T09:00:00+07:00</lastmod>
+		<lastmod>2026-10-26T09:00:00+07:00</lastmod>
+	</url>
+	<url>
+		<loc>https://architechs.id/peran-gambar-kerja-arsitektur/</loc>
+		<lastmod>2026-10-26T09:00:00+07:00</lastmod>
+		<image:image>
+			<image:loc>https://architechs.id/wp-content/uploads/2026/10/peran-gambar-kerja-arsitektur.webp</image:loc>
+		</image:image>
 	</url>
 	<url>
 		<loc>https://architechs.id/ukuran-tangga-rumah/</loc>
