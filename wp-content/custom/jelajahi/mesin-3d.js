@@ -417,38 +417,25 @@ function kasangHouse(p, pj, M, rng, adaModel) {
   return { tinggi: 4.9 };
 }
 
-function rumahSplitLevel(p, pj, M, rng) {
-  // Teras tanah berundak mengikuti kontur (naik ke belakang)
-  p.kotak(M.beton, 20, 1.5, 6.5, 0, 0, -0.75);
-  pj.kotak(M.rumput, 19.6, 0.06, 6.1, 0, 1.5, -0.75);
-  p.kotak(M.beton, 20, 3.0, 9, 0, 0, -8.5);
-  pj.kotak(M.rumput, 19.6, 0.06, 8.6, 0, 3.0, -8.5);
-  pj.kotak(M.paving, 4.2, 0.08, 9, -6.5, 0, 7.5);
-  // Tangga taman di sisi timur
-  for (let i = 0; i < 3; i++) pj.kotak(M.beton, 1.8, 0.5 * (i + 1), 0.6, 8.7, 0, 3.6 - i * 0.6);
-  for (let i = 0; i < 3; i++) pj.kotak(M.beton, 1.8, 1.5 + 0.5 * (i + 1), 0.6, 8.7, 0, -3.6 - i * 0.6);
-  // Massa 1 (lantai dasar, setengah tertanam)
-  p.kotak(M.putih, 10, 3.2, 7, -1, 0, 3);
-  p.kotak(M.kaca, 5.8, 2.4, 0.1, 0.4, 0.4, 6.53);
-  p.kotak(M.gelap, 3.2, 2.6, 0.1, -4.4, 0, 6.53);
-  p.kotak(M.putih, 10.2, 0.2, 7.2, -1, 3.2, 3);
-  p.kotak(M.kaca, 10, 1.0, 0.06, -1, 3.4, 6.55, {});
-  // Massa 2 (naik setengah lantai, dua lantai)
-  p.kotak(M.putih, 11, 6.0, 7, 0.5, 1.5, -2.5);
-  p.kotak(M.kaca, 7.6, 4.8, 0.1, -1.2, 2.2, 1.03);
-  p.kotak(M.kayu, 2.6, 6.0, 0.14, 4.5, 1.5, 1.05);
-  p.kotak(M.kacaRedup, 0.1, 2.0, 4, 6.03, 4.8, -2.5);
-  p.kotak(M.gelap, 12, 0.25, 8.2, 0.5, 8.05, -2.2, { rx: 0.14 });
-  // Massa 3 (paling atas, atap berlawanan arah)
-  p.kotak(M.krem, 9, 3.4, 6, 1.5, 3.0, -9.5);
-  p.kotak(M.kaca, 6.5, 1.8, 0.1, 1, 4.0, -6.47);
-  p.kotak(M.gelap, 10, 0.25, 7.2, 1.5, 7.0, -9.6, { rx: -0.14 });
-  mobil(p, M, -6.5, 8.2, Math.PI, '#3a5f9f', 0.08);
-  pohon(p, M, 6.5, 8, 1, rng);
-  pohon(p, M, -7.5, -10.5, 0.9, rng, 'bulat', 3.0);
-  pohon(p, M, 7.5, -1.5, 0.8, rng, 'kerucut', 1.5);
-  for (let i = 0; i < 7; i++) semak(p, M, -8 + rng() * 16, 1.6 + rng() * 0.4, 0.7 + rng() * 0.5, rng, 1.4);
-  return { tinggi: 9.5 };
+// SA House (Lombok Timur): bangunan dari model/sa-house.glb, lahan 14 x 42 m berpusat di titik asal,
+// halaman parkir di depan (+z) rapat ke boulevard. Fungsi ini menata pohon sesuai render dan sisi kavling.
+function saHouse(p, pj, M, rng, adaModel) {
+  if (!adaModel) {
+    pj.kotak(M.paving, 14, 0.08, 11, 0, 0, 15.5);
+    p.kotak(M.putih, 13, 8, 30, 0, 0, -5.5);
+    p.tambah('prisma', M.gelap, 12, 3, 8, 0, 8, 2);
+  }
+  pohon(p, M, -4.4, 12.8, 1.0, rng);
+  pohon(p, M, 5.6, 15.7, 1.0, rng, 'palem');
+  pohon(p, M, 5.7, -18.9, 1.0, rng, 'palem');
+  for (const x of [-8.6, 8.6]) {
+    for (let z = -19; z <= 19; z += 2.4) semak(p, M, x, z + rng() * 0.8, 0.7 + rng() * 0.4, rng);
+  }
+  pohon(p, M, -10.4, -16, 1.0, rng);
+  pohon(p, M, 10.4, -10, 0.95, rng, 'kerucut');
+  pohon(p, M, -10.4, 3, 0.9, rng, 'kerucut');
+  pohon(p, M, 10.4, 7, 1.05, rng);
+  return { tinggi: 14.8 };
 }
 
 function villaTepiDanau(p, pj, M, rng) {
@@ -717,11 +704,12 @@ function jembatan(p, pj, M) {
 }
 
 // Tata letak kawasan: posisi dan orientasi setiap karya (ry memutar arah depan +z),
-// serta titik berdiri untuk tombol "Lihat dari jalan". `model` = berkas GLB relatif terhadap modul ini.
+// serta titik berdiri untuk tombol "Lihat dari jalan". `model` = berkas GLB relatif terhadap modul ini,
+// `pandang` = sudut kamera khusus bila sudut bawaan terhalang bangunan lain.
 const KAVLING = [
   { id: 'paviliun-lentera', x: 0, z: 0, ry: 0, jalan: [0, 21], bangun: paviliunLentera },
   { id: 'kasang-house', x: -59.8, z: 31.6, ry: Math.PI, jalan: [-59.8, 11], bangun: kasangHouse, model: './model/kasang-house.glb?ver=1' },
-  { id: 'rumah-split-level', x: -30, z: 34, ry: Math.PI, jalan: [-23.5, 11], bangun: rumahSplitLevel },
+  { id: 'sa-house', x: -30, z: 24.7, ry: Math.PI, jalan: [-30, 1], bangun: saHouse, model: './model/sa-house.glb?ver=1', pandang: { azimut: -0.62, jarak: 72 } },
   { id: 'villa-tepi-danau', x: 84, z: 34, ry: -Math.PI / 2, jalan: [80, 11], bangun: villaTepiDanau },
   { id: 'masjid', x: -26, z: -34, ry: Math.PI / 2, jalan: [-0.5, -34], bangun: masjid },
   { id: 'kantor', x: 30, z: -36, ry: 0, jalan: [30, 0], bangun: kantor },
@@ -796,12 +784,12 @@ function bangunLingkungan(adegan, M, rng, kualitas, permukaan, jalanSetapak) {
   // Area yang tidak boleh ditanami pohon: kavling karya, plaza, gerbang, lalu jalur penghubung di bawah
   const terpakai = [
     [-80, -48, -48, -16], [-42, -10, -50, -18], [16, 44, -48, -16], [44, 94, -52, -20],
-    [-78, -54, 20, 46], [-42, -18, 20, 48], [10, 35, 20, 40], [66, 95, 21, 47],
+    [-78, -54, 20, 46], [-42, -18, 3.5, 48], [10, 35, 20, 40], [66, 95, 21, 47],
     [-17, 17, -17, 17], [-98, -94, -7, 7],
   ];
   // Jalur penghubung ke setiap karya: [x, z, lebar x, panjang z]
   const PENGHUBUNG = [
-    [-59.8, 12.25, 3, 17.5], [-23.5, 12.75, 3, 18.5], [-64, -10.75, 3, 14.5], [-6.5, -34, 7, 3],
+    [-59.8, 12.25, 3, 17.5], [-64, -10.75, 3, 14.5], [-6.5, -34, 7, 3],
     [30, -9.75, 3, 12.5], [6.5, 30, 7, 3], [66, -15.25, 3, 23.5], [80, 13.75, 3, 20.5],
     [DANAU.x, 15.5, 3, 24], [DANAU.x, 53.5, 14, 3], [DANAU.x, 59, 3, 9],
   ];
@@ -1318,8 +1306,8 @@ export async function buatMesin({ panggung, lapisanLabel, karya, kategori, kuali
 
   function sudutPandangKarya(k) {
     const besar = Math.max(k.ukuran.x, k.ukuran.z, k.tinggi * 1.4);
-    const jarak = THREE.MathUtils.clamp(besar * 2.1 + 14, 34, 150);
-    const azimut = k.kav.ry + 0.62;
+    const jarak = k.kav.pandang?.jarak ?? THREE.MathUtils.clamp(besar * 2.1 + 14, 34, 150);
+    const azimut = k.kav.ry + (k.kav.pandang?.azimut ?? 0.62);
     return { target: new THREE.Vector3(k.pusat.x, Math.min(k.tinggi * 0.35, 12), k.pusat.z), jarak, polar: THREE.MathUtils.degToRad(62), azimut };
   }
 
