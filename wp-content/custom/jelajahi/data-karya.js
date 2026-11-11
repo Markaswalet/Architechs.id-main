@@ -107,6 +107,35 @@ export const KARYA = [
     kataKunci: 'sa house rumah usaha ruko minimarket indomaret lombok timur ntb taman dalam skylight tangga luar spiral walet rbw kafe balkon',
   },
   {
+    id: 'ldy-house',
+    judul: 'Ldy House',
+    kategori: 'hunian',
+    ringkas: 'Renovasi rumah developer di lahan sudut Mojokerto, dua massa beratap pelana dengan kisi kayu oranye.',
+    deskripsi:
+      'Ldy House adalah rumah tinggal di lahan sudut sekitar 12 × 14 m, dengan sebagian besar ruang ada di lantai 1. Lantai dasar berisi lounge, ruang tamu, pantry, dapur, ruang makan, ruang keluarga, dua kamar tidur, dan mushola dengan tempat wudhu. Lantai 2 hanya berisi satu kamar, balkon, dan rooftop. Massanya terdiri dari dua bentuk beratap pelana dengan dinding putih dan kusen hitam.',
+    fakta: [
+      ['Fungsi', 'Rumah tinggal, renovasi rumah developer yang diperlebar ke samping'],
+      ['Lokasi', 'Mojokerto'],
+      ['Tahun', '2025'],
+      ['Lahan', '±168 m² (12 × 14 m, lahan sudut)'],
+      ['Lantai', '2 (lantai 2 sebagian)'],
+    ],
+    poin: [
+      'Bidang segitiga atap pelana dilapisi kisi vertikal motif kayu berwarna oranye kecokelatan',
+      'Mushola dan ruang tamu memakai pintu geser aluminium dengan kaca tempered',
+      'Dinding roster bertanaman di sisi samping dan kanopi carport rangka baja hitam',
+      'Sudut lahan yang melengkung diolah menjadi taman dengan tepian kerikil putih',
+    ],
+    galeri: [
+      '/wp-content/uploads/2026/11/ldy-house-depan-800x450.jpg',
+      '/wp-content/uploads/2026/11/ldy-house-sudut-800x450.jpg',
+      '/wp-content/uploads/2026/11/ldy-house-senja-800x450.jpg',
+      '/wp-content/uploads/2026/11/ldy-house-interior-800x450.jpg',
+    ],
+    tautan: { label: 'Lihat di Behance', href: 'https://www.behance.net/gallery/254271257/LDY-House' },
+    kataKunci: 'ldy house lady rumah tinggal renovasi rumah developer perumahan lahan sudut hook mojokerto pelana kisi kayu oranye roster carport mushola rooftop balkon dua lantai',
+  },
+  {
     id: 'villa-tepi-danau',
     judul: 'Villa Tepi Danau',
     kategori: 'hunian',

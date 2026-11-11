@@ -438,6 +438,20 @@ function saHouse(p, pj, M, rng, adaModel) {
   return { tinggi: 14.8 };
 }
 
+// LDY House (Mojokerto): bangunan dari model/ldy-house.glb, lahan sudut 14,8 x 16 m berpusat di titik asal.
+// Carport di depan (+z), dinding roster dan sudut lahan melengkung di sisi samping (+x).
+function ldyHouse(p, pj, M, rng, adaModel) {
+  if (!adaModel) {
+    pj.kotak(M.paving, 14.7, 0.08, 15.9, 0, 0, 0);
+    p.kotak(M.putih, 12.3, 3.6, 13, -0.6, 0, -1.6);
+    p.tambah('prisma', M.gelap, 5.5, 2.4, 7.5, -1.8, 3.6, -2.5);
+  }
+  // Deret pohon kecil di sepanjang sisi samping, seperti di render tampak samping
+  for (const z of [-6, -1, 4]) pohon(p, M, 8.6, z, 0.75, rng, 'kerucut');
+  pohon(p, M, -9.2, -6.5, 0.95, rng);
+  return { tinggi: 6.5 };
+}
+
 function villaTepiDanau(p, pj, M, rng) {
   pj.kotak(M.kayu, 22, 0.5, 9, 0, 0, 5.5);
   pj.kotak(M.kayu, 3, 0.4, 6.5, -6, 0, 13);
@@ -710,6 +724,7 @@ const KAVLING = [
   { id: 'paviliun-lentera', x: 0, z: 0, ry: 0, jalan: [0, 21], bangun: paviliunLentera },
   { id: 'kasang-house', x: -59.8, z: 31.6, ry: Math.PI, jalan: [-59.8, 11], bangun: kasangHouse, model: './model/kasang-house.glb?ver=1' },
   { id: 'sa-house', x: -30, z: 24.7, ry: Math.PI, jalan: [-30, 1], bangun: saHouse, model: './model/sa-house.glb?ver=1', pandang: { azimut: -0.62, jarak: 72 } },
+  { id: 'ldy-house', x: -11, z: 26, ry: Math.PI / 2, jalan: [-1.5, 26], bangun: ldyHouse, model: './model/ldy-house.glb?ver=1' },
   { id: 'villa-tepi-danau', x: 84, z: 34, ry: -Math.PI / 2, jalan: [80, 11], bangun: villaTepiDanau },
   { id: 'masjid', x: -26, z: -34, ry: Math.PI / 2, jalan: [-0.5, -34], bangun: masjid },
   { id: 'kantor', x: 30, z: -36, ry: 0, jalan: [30, 0], bangun: kantor },
@@ -784,7 +799,7 @@ function bangunLingkungan(adegan, M, rng, kualitas, permukaan, jalanSetapak) {
   // Area yang tidak boleh ditanami pohon: kavling karya, plaza, gerbang, lalu jalur penghubung di bawah
   const terpakai = [
     [-80, -48, -48, -16], [-42, -10, -50, -18], [16, 44, -48, -16], [44, 94, -52, -20],
-    [-78, -54, 20, 46], [-42, -18, 3.5, 48], [10, 35, 20, 40], [66, 95, 21, 47],
+    [-78, -54, 20, 46], [-42, -18, 3.5, 48], [-19, -3, 16, 36], [10, 35, 20, 40], [66, 95, 21, 47],
     [-17, 17, -17, 17], [-98, -94, -7, 7],
   ];
   // Jalur penghubung ke setiap karya: [x, z, lebar x, panjang z]
