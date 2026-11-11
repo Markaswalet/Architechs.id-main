@@ -97,6 +97,40 @@ KARYA = {
             'paving': (0x8d8f90, 0.95, 0), 'kerikil': (0x867f7b, 1, 0),
         },
     },
+    # LDY House .glb (SimLab GLTF dari SketchUp/Enscape). Carport dan depan rumah menghadap +z glTF,
+    # sisi samping lahan sudut menghadap +x.
+    'ldy-house': {
+        'saring': {
+            'kecil': 3, 'ambang': 200,
+            'nama': r'Plant|Potted|Tree|Pouf|Rug|Light|kuroirowgn|Framed|Picture|Chair|Sofa|Bed|Lamp|Table|Meja',
+            'material': r'Material~3|Material~4|Grass Light Green|Calathea|Sumele_Hair|Material #43',
+        },
+        'terlihat': 'ldy-house-terlihat.json',
+        'kotak': [11012],  # dinding roster samping: 290 balok, masing-masing 340 segitiga
+        'y_min': -0.05,
+        'tapak': {'x': (0.88, 15.63), 'z': (-17.71, -1.77)},
+        'buang_material': r'^Pavement 13',  # jalan kawasan sudah ada
+        'peran_bawaan': 'dinding',
+        'peran': {None: 'kerikil'},  # tepian kerikil putih taman sudut
+        'peran_node': {104: 'paving', 180: 'paving'},  # lantai tapak bermaterial sama dengan dinding (Concrete 04)
+        'peran_nama': {
+            'Concrete 04': 'dinding', 'Concrete 16': 'beton', '[Polished Concrete New]': 'roster',
+            '[Groundcover Wood Mix]': 'tanaman', '[0132_LightGray]': 'pagar',
+            '[0136_Charcoal]': 'baja', '[0136_Charcoal]1': 'baja', '[0137_Black]1': 'baja', '[0137_Black]2': 'baja',
+            '[0134_DimGray]': 'abu', '[Slate]': 'abu', 'Tiles 13': 'abu',
+            'Wood 19, Planks': 'kisi', '[Roofing Shingles Asphalt]': 'atap', '[Roofing Metal Standing Seam Red]': 'atap',
+            'Wood 55': 'kayu', 'Wood 04, Brick Bond': 'kayu', 'Wood 53': 'kayu', '*35': 'kayu',
+            'Concrete 02': 'paving', '[Tile Limestone Large]': 'paving', '[Groundcover_Wood_Mix]': 'tanaman',
+            '[Vegetation Grass]': 'rumput',
+            '[Translucent Glass Gray]': 'kaca', '[Translucent Glass Gray]2': 'kaca', 'glass2': 'kaca',
+        },
+        'warna': {  # sRGB, kekasaran, kelogaman; dari rata-rata tekstur dan render Drive
+            'dinding': (0xefece6, 0.88, 0), 'beton': (0x8c8883, 0.95, 0), 'roster': (0xc9c9cb, 0.9, 0),
+            'tanaman': (0x6f8f4a, 1, 0), 'pagar': (0xa9aaa5, 0.85, 0), 'baja': (0x2a2b2d, 0.55, 0.3),
+            'abu': (0x5c5d5f, 0.75, 0.1), 'kisi': (0xb8642c, 0.75, 0), 'atap': (0x6e655f, 0.85, 0),
+            'paving': (0x8d8f90, 0.95, 0), 'kerikil': (0xd9d6d0, 1, 0),
+        },
+    },
 }
 MATERIAL_MESIN = {'kaca', 'rumput', 'logam', 'kayu', 'putih'}
 KANOPI_OPASITAS = 0.45
@@ -224,6 +258,19 @@ def perintah_daftar(sumber, akar=None):
                   f'min=({lo[0]:6.2f},{lo[1]:5.2f},{lo[2]:6.2f}) ukuran=({sz[0]:5.2f},{sz[1]:5.2f},{sz[2]:5.2f}) | {mm}')
 
 
+def akar_kotak(md, cfg, k):
+    """Node `kotak` di atas k: mesh di bawahnya diganti kotak batasnya (mis. roster yang tiap balok
+    beratus segitiga), sehingga lolos aturan saring perabot kecil."""
+    while k is not None:
+        if k in cfg.get('kotak', ()):
+            return k
+        k = md.induk[k]
+
+
+# Urutan titik kotak: indeks = x + 2y + 4z (0 = sisi min, 1 = sisi max); muka berlawanan jarum jam dari luar
+MUKA_KOTAK = (0, 4, 6, 0, 6, 2, 1, 3, 7, 1, 7, 5, 0, 1, 5, 0, 5, 4, 2, 6, 7, 2, 7, 3, 0, 2, 3, 0, 3, 1, 4, 5, 7, 4, 7, 6)
+
+
 def daun_terpilih(md, cfg, pakai_terlihat=True):
     if 'simpan' in cfg:
         buang = set(cfg['buang'])
@@ -236,6 +283,9 @@ def daun_terpilih(md, cfg, pakai_terlihat=True):
     hasil = []
     for k, nd in enumerate(md.nodes):
         if 'mesh' not in nd or md.dunia[k] is None:
+            continue
+        if akar_kotak(md, cfg, k) is not None:
+            hasil.append(k)
             continue
         t, lo, hi, mc = md.batas(k)
         if max(hi[i] - lo[i] for i in range(3)) < s['kecil'] and t > s['ambang']:
@@ -380,11 +430,23 @@ def perintah_bake(sumber, karya, keluaran):
         m = md.dunia[k]
         det = m[0] * (m[5] * m[10] - m[9] * m[6]) - m[4] * (m[1] * m[10] - m[9] * m[2]) + m[8] * (m[1] * m[6] - m[5] * m[2])
         akar = akar_simpan(k)
+        if akar_kotak(md, cfg, k) is not None:
+            prim = md.g['meshes'][md.nodes[k]['mesh']]['primitives'][0]
+            peran = peran_dari(prim.get('material'), akar)
+            t, lo, hi, mc = md.batas(k)
+            dp = array('f', [(hi if (i >> a) & 1 else lo)[a] for i in range(8) for a in range(3)])
+            if peran is None or not di_tapak(cfg, dp, 0, 7, 7):
+                continue
+            kel = kelompok.setdefault(peran, {'pos': array('f'), 'idx': array('I')})
+            awal = len(kel['pos']) // 3
+            kel['pos'].extend(dp)
+            kel['idx'].extend(awal + v for v in MUKA_KOTAK)
+            continue
         for p in md.g['meshes'][md.nodes[k]['mesh']]['primitives']:
             if p.get('mode', 4) != 4:
                 continue
             dp, idx = posisi_dunia(md, k, p)
-            peran = peran_dari(p.get('material'), akar)
+            peran = cfg.get('peran_node', {}).get(k) or peran_dari(p.get('material'), akar)
             if peran is None:
                 continue
             kel = kelompok.setdefault(peran, {'pos': array('f'), 'idx': array('I')})
